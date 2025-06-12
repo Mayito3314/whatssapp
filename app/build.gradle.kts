@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("kotlin-kapt")
 }
 
 android {
@@ -51,8 +52,16 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
 
-    implementation ("androidx.navigation:navigation-fragment-ktx:2.7.7")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
+// Navegación basada en fragments con soporte para ViewModel, SafeArgs, etc.
+    implementation(libs.androidx.navigation.fragment.ktx)
 
+// Soporte para manejar navegación desde la UI (barra de acciones, botones, etc.)
+    implementation(libs.androidx.navigation.ui.ktx)
+
+// Glide: Librería eficiente para carga de imágenes (desde URL, recursos locales, etc.)
+    implementation(libs.glide)
+
+// Glide Compiler: Necesario para procesar anotaciones internas de Glide (por ejemplo, GlideApp)
+    kapt(libs.compiler)
 
 }

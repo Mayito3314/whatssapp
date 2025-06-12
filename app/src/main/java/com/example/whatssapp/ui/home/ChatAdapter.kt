@@ -19,6 +19,8 @@ class ChatAdapter(
     private val chats: List<ChatModel>
 ) : RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
 
+    private var filteredList: List<ChatModel> = chats
+
     /**
      * ViewHolder encargado de enlazar los datos de [ChatModel] con la vista del ítem.
      *
@@ -66,12 +68,26 @@ class ChatAdapter(
      * Enlaza los datos de la posición dada con el [ChatViewHolder].
      */
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
-        holder.bind(chats[position])
+        holder.bind(filteredList[position])
     }
 
     /**
      * Devuelve el total de elementos a mostrar en el RecyclerView.
      */
-    override fun getItemCount(): Int = chats.size
-}
+    override fun getItemCount(): Int = filteredList.size
 
+    /**
+     * Actualiza la vista con los filtros
+     */
+    fun filter(query: String) {
+        filteredList = if (query.isBlank()) {
+            chats
+        } else {
+            chats.filter {
+                it.name.contains(query, ignoreCase = true) ||
+                        it.message.contains(query, ignoreCase = true)
+            }
+        }
+        notifyDataSetChanged()
+    }
+}

@@ -22,6 +22,9 @@ import com.example.whatssapp.utils.ChatUtils
  */
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>() {
+    private lateinit var chatAdapter: ChatAdapter
+
+
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?) =
         FragmentHomeBinding.inflate(inflater, container, false)
@@ -29,7 +32,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     override fun onViewCreated(view: android.view.View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
-
+        setupSearchView()
     }
 
 
@@ -45,10 +48,33 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
      */
     private fun initRecycler(){
         val chatList = ChatUtils.getChatList()
-        val adapter = ChatAdapter(chatList)
-
+        chatAdapter = ChatAdapter(chatList)
         binding.chatRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        binding.chatRecyclerView.adapter = adapter
+        binding.chatRecyclerView.adapter = chatAdapter
+    }
+
+
+    /**
+     * Configura el listener del componente SearchView para filtrar la lista de chats en tiempo real.
+     *
+     * Este método escucha los cambios de texto que el usuario escribe en el campo de búsqueda
+     * y actualiza dinámicamente el contenido del RecyclerView filtrando los elementos que coincidan
+     * con el nombre o el último mensaje del contacto.
+     *
+     * La lógica de filtrado se delega al adaptador (`chatAdapter.filter()`), que actualiza
+     * su lista interna con los resultados coincidentes.
+     *
+     * @see ChatAdapter.filter para más detalles del proceso de filtrado.
+     */
+    private fun setupSearchView() {
+        binding.search.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = false
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                chatAdapter.filter(newText.orEmpty())
+                return true
+            }
+        })
     }
 
 }
